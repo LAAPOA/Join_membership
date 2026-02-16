@@ -207,6 +207,7 @@
             background-color: #ffffff;
             cursor: crosshair;
             touch-action: none;
+            display: block;
         }
 
         .signature-buttons {
@@ -440,16 +441,27 @@
         let isDrawing = false;
         let hasSignature = false;
 
-        // Set canvas size
+        // Set canvas size - ensure it's properly initialized
         function resizeCanvas() {
             const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
+            // Set actual canvas dimensions (not just CSS)
+            canvas.width = rect.width * window.devicePixelRatio || rect.width;
+            canvas.height = rect.height * window.devicePixelRatio || rect.height;
+            // Scale for high DPI displays
+            if (window.devicePixelRatio > 1) {
+                ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            }
+            // Set drawing style
             ctx.strokeStyle = '#000';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
         }
+        
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            resizeCanvas();
+        });
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
@@ -481,8 +493,20 @@
 
         function getPosition(e) {
             const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX || e.touches[0].clientX) - rect.left;
-            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            let clientX, clientY;
+            if (e.touches && e.touches[0]) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            const x = (clientX - rect.left) * scaleX;
+            const y = (clientY - rect.top) * scaleY;
             return { x, y };
         }
 
@@ -502,6 +526,8 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             hasSignature = false;
             signatureDataField.value = '';
+            // Re-initialize canvas after clear
+            resizeCanvas();
         });
 
         // Email domain validation - exclude city email addresses
