@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join the LAAPOA Membership</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #2B5A9E 0%, #3D6BA8 50%, #2B4C7E 100%);
+            padding: 40px 20px;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .logo-container {
+            width: 100%;
+            background: #2B5A9E;
+            padding: 0;
+            margin: 0;
+        }
+
+        .form-logo {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .container > h1 {
+            padding: 35px 30px 15px 30px;
+            margin: 0;
+            text-align: center;
+            color: #2B4C7E;
+            font-size: 26px;
+            font-weight: bold;
+            border-bottom: 3px solid #3D6BA8;
+            padding-bottom: 15px;
+            margin-bottom: 35px;
+        }
+
+        .container > form {
+            padding: 0 30px 40px 30px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .form-row.three-columns {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2B4C7E;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #d32f2f;
+        }
+
+        .conditional-required {
+            display: none;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #fff;
+            transition: border-color 0.3s;
+        }
+
+        input::placeholder,
+        select option:first-child {
+            color: #bbb;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%232B4C7E' d='M1.41 0L6 4.58L10.59 0L12 1.41l-6 6l-6-6z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #3D6BA8;
+            box-shadow: 0 0 0 3px rgba(61, 107, 168, 0.1);
+        }
+
+        .radio-section {
+            margin: 35px 0;
+            padding: 20px;
+            background-color: #f8f9fb;
+            border-radius: 8px;
+            border: 2px solid #e3e8f0;
+        }
+
+        .radio-section > label:first-child {
+            display: block;
+            margin-bottom: 20px;
+            color: #2B4C7E;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .radio-options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 18px;
+            border: 2px solid #d0dae8;
+            background-color: #ffffff;
+            border-radius: 6px;
+            transition: all 0.3s;
+            cursor: pointer;
+            height: 100%;
+        }
+
+        .radio-option:hover {
+            border-color: #3D6BA8;
+            box-shadow: 0 2px 8px rgba(61, 107, 168, 0.15);
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            color: #2B4C7E;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 14px;
+            margin-top: 3px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+            accent-color: #3D6BA8;
+        }
+
+        .radio-text {
+            font-size: 13px;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .signature-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fb;
+            border-radius: 8px;
+            border: 2px solid #e3e8f0;
+        }
+
+        .signature-section label {
+            margin-bottom: 12px;
+        }
+
+        .signature-canvas {
+            width: 100%;
+            height: 150px;
+            border: 2px solid #d0dae8;
+            border-radius: 4px;
+            background-color: #ffffff;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .signature-buttons {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .clear-button {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .clear-button:hover {
+            background-color: #5a6268;
+        }
+
+        .signature-box {
+            width: 100%;
+            min-height: 120px;
+            border: 2px solid #d0dae8;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 10px;
+            font-family: 'Brush Script MT', cursive, Arial;
+            font-size: 24px;
+            resize: vertical;
+            background-color: #ffffff;
+            transition: border-color 0.3s;
+        }
+
+        .signature-box:focus {
+            outline: none;
+            border-color: #3D6BA8;
+            box-shadow: 0 0 0 3px rgba(61, 107, 168, 0.1);
+        }
+
+        .submit-section {
+            margin-top: 35px;
+            text-align: center;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #2B4C7E 0%, #3D6BA8 100%);
+            color: white;
+            padding: 14px 50px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(43, 76, 126, 0.3);
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(43, 76, 126, 0.4);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+
+            .header-banner img {
+                width: 100%;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .radio-options-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="https://github.com/LAAPOA/Join_membership/blob/main/LAAPOA_top_art.png?raw=true" alt="LAAPOA Logo" class="form-logo">
+        </div>
+        
+        <h1>Join the LAAPOA Membership</h1>
+
+        <form id="membershipForm" action="/submit" method="POST">
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Last Name <span class="required">*</span></label>
+                    <input type="text" name="lastName" placeholder="Your Last name" required>
+                </div>
+                <div class="form-group">
+                    <label>First Name <span class="required">*</span></label>
+                    <input type="text" name="firstName" placeholder="Your First Name" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full-width" style="max-width: 50%; margin: 0 auto;">
+                    <label>Date of Birth <span class="required">*</span></label>
+                    <input type="date" id="dob" name="dob" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>City Employee I.D. No <span class="required">*</span></label>
+                    <input type="tel" name="employeeId" id="employeeId" placeholder="Type your 5 or 6 digit City I.D. №" pattern="[0-9]{5,6}" maxlength="6" inputmode="numeric" required>
+                </div>
+                <div class="form-group">
+                    <label>Department <span class="required">*</span></label>
+                    <select name="department" required>
+                        <option value="">specify your department</option>
+                        <option value="Airports - 0101">Airports - 0101</option>
+                        <option value="LAPD - 4302">LAPD - 4302</option>
+                        <option value="Rec & Parks - 7901">Rec & Parks - 7901</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Phone <span class="required conditional-required">*</span></label>
+                    <input type="tel" id="phone" name="phone" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label>Personal Email <span class="required conditional-required">*</span></label>
+                    <input type="email" id="email" name="email" placeholder="Input your personal (NON-City) email address">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label>Street Address <span class="required conditional-required">*</span></label>
+                    <input type="text" id="streetAddress" name="streetAddress" placeholder="Enter house number and street name">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>ZIP Code <span class="required conditional-required">*</span></label>
+                    <input type="text" id="zipCode" name="zipCode" placeholder="Enter ZIP code" maxlength="5" pattern="[0-9]{5}">
+                </div>
+                <div class="form-group">
+                    <label>City <span class="required conditional-required">*</span></label>
+                    <input type="text" id="city" name="city" placeholder="Will auto-populate">
+                </div>
+                <div class="form-group">
+                    <label>State <span class="required conditional-required">*</span></label>
+                    <input type="text" id="state" name="state" placeholder="Will auto-populate">
+                </div>
+            </div>
+
+            <div class="radio-section">
+                <label>Do you wish to join LAAPOA's membership? <span class="required">*</span></label>
+                
+                <div class="radio-options-container">
+                    <div class="radio-option">
+                        <input type="radio" id="join-yes" name="membership" value="yes" required>
+                        <label for="join-yes" class="radio-text">
+                            YES, I wish to join and receive the benefits of LAAPOA membership. I understand the membership dues are on a payperiod, and will be directly deducted from my pay check. dues amount per pay period - $81.00
+                        </label>
+                    </div>
+
+                    <div class="radio-option">
+                        <input type="radio" id="join-no" name="membership" value="no">
+                        <label for="join-no" class="radio-text">
+                            NO, I do not wish to join, or I am currently a member and I want to terminate, as in opt-out of my current membership with LAAPOA. I do not wish to be protected by any LAAPOA's benefits offerings or programs. I understand the risks involved including NO association provided representation at any phase of the I.A. or POST Licensing Review Process; and I accept these risks in exchange for paying ZERO dues contributions. - $0.00
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="signature-section">
+                <label>Signature <span class="required conditional-required">*</span></label>
+                <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+                <div class="signature-buttons">
+                    <button type="button" id="clearSignature" class="clear-button">Clear Signature</button>
+                </div>
+                <input type="hidden" id="signatureData" name="signature">
+            </div>
+
+            <div class="submit-section">
+                <button type="submit" class="submit-button">Submit</button>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        // === CONFIGURATION ===
+        // Google Apps Script Web App URL for form submission
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtB8GmkFkrTAHcKvcWJZxPf3_0JAEf5ZSkx9FLOfGf4_c6eOgQKnjeyVnNnJtC-fO_/exec';
+
+        // Get all form field references
+        const dobField = document.getElementById('dob');
+        const zipCodeField = document.getElementById('zipCode');
+        const cityField = document.getElementById('city');
+        const stateField = document.getElementById('state');
+        const yesRadio = document.getElementById('join-yes');
+        const noRadio = document.getElementById('join-no');
+        const emailField = document.getElementById('email');
+        const phoneField = document.getElementById('phone');
+        const streetAddressField = document.getElementById('streetAddress');
+        const employeeIdField = document.getElementById('employeeId');
+        const signatureDataField = document.getElementById('signatureData');
+        const conditionalAsterisks = document.querySelectorAll('.conditional-required');
+
+        // Signature Canvas Setup
+        const canvas = document.getElementById('signatureCanvas');
+        const ctx = canvas.getContext('2d');
+        const clearButton = document.getElementById('clearSignature');
+        let isDrawing = false;
+        let hasSignature = false;
+
+        // Set canvas size
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Drawing functions
+        function startDrawing(e) {
+            isDrawing = true;
+            const pos = getPosition(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            hasSignature = true;
+            const pos = getPosition(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.closePath();
+            if (hasSignature) {
+                // Save signature as base64
+                signatureDataField.value = canvas.toDataURL('image/png');
+            }
+        }
+
+        function getPosition(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            return { x, y };
+        }
+
+        // Mouse events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        // Clear signature
+        clearButton.addEventListener('click', function() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasSignature = false;
+            signatureDataField.value = '';
+        });
+
+        // Email domain validation - exclude city email addresses
+        const blockedDomains = ['@lawa.org', '@lapd.online', '@lacity.org'];
+        
+        emailField.addEventListener('blur', function() {
+            const email = this.value.toLowerCase();
+            if (email) {
+                const isBlocked = blockedDomains.some(domain => email.endsWith(domain));
+                if (isBlocked) {
+                    this.setCustomValidity('Please use a non-city email address (not @lawa.org, @lapd.online, or @lacity.org)');
+                    this.reportValidity();
+                } else {
+                    this.setCustomValidity('');
+                }
+            }
+        });
+
+        emailField.addEventListener('input', function() {
+            // Clear error as user types
+            this.setCustomValidity('');
+        });
+
+        // Employee ID validation - only allow 5-6 digit numbers
+        employeeIdField.addEventListener('input', function(e) {
+            // Remove any non-numeric characters
+            this.value = this.value.replace(/[^0-9]/g, '');
+            
+            // Limit to 6 digits
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
+            }
+        });
+
+        employeeIdField.addEventListener('blur', function() {
+            const value = this.value;
+            if (value && (value.length < 5 || value.length > 6)) {
+                this.setCustomValidity('Employee ID must be 5 or 6 digits');
+                this.reportValidity();
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+
+        // Set default date for DOB picker to January 1, 1995
+        dobField.value = '1995-01-01';
+        dobField.max = new Date().toISOString().split('T')[0]; // Can't select future dates
+
+        // ZIP code to city lookup using free API (works for all US ZIP codes)
+        // Falls back to manual entry if API is unavailable
+        zipCodeField.addEventListener('input', async function(e) {
+            const zip = e.target.value;
+            
+            // Only lookup when we have 5 digits
+            if (zip.length === 5 && /^\d{5}$/.test(zip)) {
+                try {
+                    // Using Zippopotam.us - free ZIP code API, no key needed
+                    const response = await fetch(`https://api.zippopotam.us/us/${zip}`, {
+                        method: 'GET',
+                        mode: 'cors'
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        const place = data.places[0];
+                        
+                        // Auto-populate but allow editing
+                        cityField.value = place['place name'];
+                        stateField.value = place['state'];
+                        cityField.style.backgroundColor = '#f0f8ff'; // Light blue to indicate auto-filled
+                        stateField.style.backgroundColor = '#f0f8ff';
+                    } else {
+                        // ZIP not found - allow manual entry
+                        cityField.placeholder = 'Enter city manually';
+                        stateField.placeholder = 'Enter state manually';
+                    }
+                } catch (error) {
+                    // Network error or API unavailable - silently allow manual entry
+                    console.log('ZIP lookup unavailable - manual entry enabled');
+                    cityField.placeholder = 'Enter city manually';
+                    stateField.placeholder = 'Enter state manually';
+                    // Don't show error to user - just let them enter manually
+                }
+            } else if (zip.length < 5) {
+                // Reset background color when ZIP is incomplete
+                cityField.style.backgroundColor = '';
+                stateField.style.backgroundColor = '';
+                cityField.placeholder = 'Will auto-populate (or enter manually)';
+                stateField.placeholder = 'Will auto-populate (or enter manually)';
+            }
+        });
+
+        // Remove background color when user manually edits
+        cityField.addEventListener('input', function() {
+            this.style.backgroundColor = '';
+        });
+        
+        stateField.addEventListener('input', function() {
+            this.style.backgroundColor = '';
+        });
+
+        // Handle conditional required fields based on membership selection
+        function updateRequiredFields() {
+            if (yesRadio.checked) {
+                // If YES selected, make these fields required
+                emailField.required = true;
+                phoneField.required = true;
+                streetAddressField.required = true;
+                zipCodeField.required = true;
+                cityField.required = true;
+                stateField.required = true;
+                // Signature is checked during form submission
+                conditionalAsterisks.forEach(asterisk => {
+                    asterisk.style.display = 'inline';
+                });
+            } else {
+                // If NO selected, these fields are not required
+                emailField.required = false;
+                phoneField.required = false;
+                streetAddressField.required = false;
+                zipCodeField.required = false;
+                cityField.required = false;
+                stateField.required = false;
+                conditionalAsterisks.forEach(asterisk => {
+                    asterisk.style.display = 'none';
+                });
+            }
+        }
+
+        yesRadio.addEventListener('change', updateRequiredFields);
+        noRadio.addEventListener('change', updateRequiredFields);
+
+        document.getElementById('membershipForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Check if signature is required and present
+            if (yesRadio.checked && !hasSignature) {
+                alert('Please provide your signature before submitting.');
+                return;
+            }
+            
+            // Check for blocked email domains if email is provided
+            if (emailField.value) {
+                const email = emailField.value.toLowerCase();
+                const isBlocked = ['@lawa.org', '@lapd.online', '@lacity.org'].some(domain => email.endsWith(domain));
+                if (isBlocked) {
+                    alert('Please use a non-city email address. City email addresses (@lawa.org, @lapd.online, @lacity.org) are not accepted.');
+                    emailField.focus();
+                    return;
+                }
+            }
+            
+            // Validate employee ID
+            const empId = employeeIdField.value;
+            if (empId.length < 5 || empId.length > 6 || !/^[0-9]+$/.test(empId)) {
+                alert('Employee ID must be 5 or 6 digits.');
+                employeeIdField.focus();
+                return;
+            }
+            
+            // Collect form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Add signature image if present
+            if (hasSignature) {
+                data.signatureImage = signatureDataField.value;
+            }
+            
+            // Show loading state
+            const submitButton = this.querySelector('.submit-button');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Submitting greatness takes patience 😉';
+            submitButton.disabled = true;
+            
+            try {
+                // Send to Google Sheets
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Google Apps Script requires no-cors
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                // Note: no-cors mode means we can't read the response
+                // We assume success if no error is thrown
+                alert('Thank you! Your LAAPOA membership form has been submitted successfully.');
+                
+                // Reset form
+                this.reset();
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                hasSignature = false;
+                signatureDataField.value = '';
+                
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('There was an error submitting your form. Please try again or contact support.');
+            } finally {
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
