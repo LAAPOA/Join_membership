@@ -238,11 +238,19 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            position: relative;
         }
         
-        /* Ensure canvas is above other elements and fully interactive */
+        /* Visual feedback when canvas is touched/active */
         .signature-canvas:active {
             border-color: #3D6BA8;
+            box-shadow: 0 0 0 3px rgba(61, 107, 168, 0.1);
+        }
+        
+        /* Ensure canvas is above other elements */
+        .signature-section {
+            position: relative;
+            z-index: 1;
         }
 
         .signature-buttons {
@@ -444,6 +452,11 @@
                     <small style="opacity: 0.8; margin-top: 8px; display: block;">The signature pad works best in landscape mode on mobile devices.</small>
                 </div>
                 
+                <p style="font-size: 13px; color: #666; margin-bottom: 10px;">
+                    <strong>How to sign:</strong> Use your finger or stylus to draw your signature in the box below.
+                    The border will turn blue when you touch it.
+                </p>
+                
                 <canvas id="signatureCanvas" class="signature-canvas"></canvas>
                 <div class="signature-buttons">
                     <button type="button" id="clearSignature" class="clear-button">Clear Signature</button>
@@ -477,192 +490,184 @@
         const signatureDataField = document.getElementById('signatureData');
         const conditionalAsterisks = document.querySelectorAll('.conditional-required');
 
-        // Signature Canvas Setup
+        // Signature Canvas Setup - SIMPLIFIED FOR MAXIMUM MOBILE COMPATIBILITY
         const canvas = document.getElementById('signatureCanvas');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: false });
         const clearButton = document.getElementById('clearSignature');
         let isDrawing = false;
         let hasSignature = false;
+        let lastX = 0;
+        let lastY = 0;
 
-        // Set canvas size - ensure it's properly initialized for mobile
+        // Simplified canvas sizing - works reliably on all devices
         function resizeCanvas() {
+            // Get the actual display size
             const rect = canvas.getBoundingClientRect();
-            const dpr = window.devicePixelRatio || 1;
             
-            // Set actual canvas dimensions accounting for device pixel ratio
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            
-            // Set display size (CSS pixels)
-            canvas.style.width = rect.width + 'px';
-            canvas.style.height = rect.height + 'px';
-            
-            // Scale context for high DPI displays
-            ctx.scale(dpr, dpr);
+            // Set canvas pixel dimensions to match display size
+            // Use simple 1:1 ratio - no DPR complications
+            canvas.width = rect.width;
+            canvas.height = rect.height;
             
             // Set drawing style
             ctx.strokeStyle = '#000';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
+            
+            console.log('Canvas resized:', canvas.width, 'x', canvas.height);
         }
         
-        // Initialize on page load and when window resizes
-        window.addEventListener('load', function() {
-            setTimeout(resizeCanvas, 100); // Small delay to ensure layout is ready
-        });
-        
+        // Initialize canvas
         resizeCanvas();
         
+        // Handle window resize
+        let resizeTimeout;
         window.addEventListener('resize', function() {
-            const signatureData = signatureDataField.value;
-            resizeCanvas();
-            // Restore signature if it existed
-            if (signatureData && hasSignature) {
-                const img = new Image();
-                img.onload = function() {
-                    ctx.drawImage(img, 0, 0, canvas.width / (window.devicePixelRatio || 1), canvas.height / (window.devicePixelRatio || 1));
-                };
-                img.src = signatureData;
-            }
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                const savedSignature = hasSignature ? signatureDataField.value : null;
+                resizeCanvas();
+                if (savedSignature) {
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    };
+                    img.src = savedSignature;
+                }
+            }, 100);
         });
 
-        // Drawing functions
+        // Simplified drawing functions
+        function getCanvasPosition(e) {
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches ? e.touches[0] : e;
+            
+            return {
+                x: touch.clientX - rect.left,
+                y: touch.clientY - rect.top
+            };
+        }
+
         function startDrawing(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
             isDrawing = true;
-            e.preventDefault(); // Prevent scrolling on mobile
-            const pos = getPosition(e);
+            const pos = getCanvasPosition(e);
+            lastX = pos.x;
+            lastY = pos.y;
+            
+            // Start a new path
             ctx.beginPath();
             ctx.moveTo(pos.x, pos.y);
+            
+            console.log('Started drawing at:', pos.x, pos.y);
         }
 
         function draw(e) {
             if (!isDrawing) return;
-            e.preventDefault(); // Prevent scrolling on mobile
-            hasSignature = true;
-            const pos = getPosition(e);
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const pos = getCanvasPosition(e);
+            
+            // Draw line from last position to current position
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
+            
+            lastX = pos.x;
+            lastY = pos.y;
+            hasSignature = true;
         }
 
         function stopDrawing(e) {
             if (!isDrawing) return;
+            
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
             isDrawing = false;
-            ctx.closePath();
+            
             if (hasSignature) {
-                // Save signature as base64
+                // Save signature
                 signatureDataField.value = canvas.toDataURL('image/png');
+                console.log('Signature saved');
             }
         }
 
-        function getPosition(e) {
-            const rect = canvas.getBoundingClientRect();
-            
-            let clientX, clientY;
-            
-            // Handle touch events
-            if (e.touches && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } 
-            // Handle mouse events
-            else if (e.clientX !== undefined && e.clientY !== undefined) {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-            else {
-                return { x: 0, y: 0 };
-            }
-            
-            // Calculate position relative to canvas (in CSS pixels)
-            // The canvas is already scaled by DPR in resizeCanvas, so we use CSS pixel coordinates
-            const x = clientX - rect.left;
-            const y = clientY - rect.top;
-            
-            return { x, y };
-        }
-
+        // Remove all old event listeners and add new ones
         // Mouse events
-        canvas.addEventListener('mousedown', startDrawing, { passive: false });
-        canvas.addEventListener('mousemove', draw, { passive: false });
-        canvas.addEventListener('mouseup', stopDrawing, { passive: false });
-        canvas.addEventListener('mouseout', stopDrawing, { passive: false });
+        canvas.addEventListener('mousedown', startDrawing, false);
+        canvas.addEventListener('mousemove', draw, false);
+        canvas.addEventListener('mouseup', stopDrawing, false);
+        canvas.addEventListener('mouseleave', stopDrawing, false);
 
-        // Touch events - with passive:false to allow preventDefault
+        // Touch events - CRITICAL for mobile
         canvas.addEventListener('touchstart', startDrawing, { passive: false });
         canvas.addEventListener('touchmove', draw, { passive: false });
         canvas.addEventListener('touchend', stopDrawing, { passive: false });
         canvas.addEventListener('touchcancel', stopDrawing, { passive: false });
 
         // Clear signature
-        clearButton.addEventListener('click', function() {
+        clearButton.addEventListener('click', function(e) {
+            e.preventDefault();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             hasSignature = false;
             signatureDataField.value = '';
-            // Re-initialize canvas after clear
-            resizeCanvas();
+            console.log('Signature cleared');
         });
 
-        // Handle orientation changes on mobile
+        // Simplified orientation handling for mobile
         function checkOrientation() {
             const isMobile = window.innerWidth <= 768;
             const isPortrait = window.innerHeight > window.innerWidth;
             const landscapeReminder = document.getElementById('landscapeReminder');
             
             if (isMobile && isPortrait) {
-                // Portrait mode - show reminder
+                // Portrait mode - hide canvas, show reminder
                 landscapeReminder.style.display = 'block';
                 canvas.style.display = 'none';
                 clearButton.parentElement.style.display = 'none';
+                console.log('Portrait mode - canvas hidden');
             } else {
-                // Landscape mode or desktop - hide reminder, show canvas
+                // Landscape or desktop - show canvas
                 landscapeReminder.style.display = 'none';
                 canvas.style.display = 'block';
                 clearButton.parentElement.style.display = 'flex';
                 
-                // IMPORTANT: Re-initialize canvas when switching to landscape
-                // This ensures the canvas is properly sized and ready for drawing
+                // Reinitialize canvas after a delay
                 setTimeout(function() {
-                    // Save existing signature if present
-                    const existingSignature = hasSignature ? signatureDataField.value : null;
-                    
-                    // Reinitialize canvas
+                    const savedSignature = hasSignature ? signatureDataField.value : null;
                     resizeCanvas();
                     
-                    // Restore signature if it existed
-                    if (existingSignature && hasSignature) {
+                    // Restore signature if present
+                    if (savedSignature) {
                         const img = new Image();
                         img.onload = function() {
-                            const dpr = window.devicePixelRatio || 1;
-                            ctx.drawImage(img, 0, 0, canvas.width / dpr, canvas.height / dpr);
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            console.log('Signature restored');
                         };
-                        img.src = existingSignature;
+                        img.src = savedSignature;
                     }
                     
-                    // Add visual feedback that canvas is ready
-                    canvas.style.borderColor = '#3D6BA8';
-                    setTimeout(function() {
-                        canvas.style.borderColor = '#d0dae8';
-                    }, 500);
-                    
-                    console.log('Canvas initialized in landscape mode - ready for signing');
-                }, 150);
+                    console.log('Landscape mode - canvas ready');
+                }, 200);
             }
         }
         
-        // Check on load
+        // Check orientation on load and when it changes
         checkOrientation();
         
-        // Listen for orientation changes (iOS and Android)
         window.addEventListener('orientationchange', function() {
-            setTimeout(checkOrientation, 250); // Longer delay for orientation change
+            setTimeout(checkOrientation, 300);
         });
         
-        // Also listen for resize as backup (some devices fire this instead)
-        let resizeTimer;
         window.addEventListener('resize', function() {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(checkOrientation, 250);
+            setTimeout(checkOrientation, 100);
         });
 
         // Email domain validation - exclude city email addresses
