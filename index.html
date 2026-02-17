@@ -13,16 +13,38 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            background-color: #f5f5f5;
-            padding: 0;
+            background-color: #1a2a4a;
+            background-image: 
+                radial-gradient(ellipse at top left, #C9A84C 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, #C9A84C 0%, transparent 50%),
+                radial-gradient(ellipse at center, #1e3a6e 20%, #0f1e35 100%);
+            padding: 40px 20px 60px 20px;
             line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* Unified wrapper — header + form share one double border */
+        .form-wrapper {
+            max-width: 750px;
+            margin: 0 auto;
+            /* Double black border with gold gap */
+            border: 3px solid #000;
+            outline: 3px solid #000;
+            outline-offset: 5px;
+            box-shadow:
+                0 0 0 3px #000,       /* inner black line */
+                0 0 0 8px #C9A84C,    /* gold gap */
+                0 0 0 11px #000,      /* outer black line */
+                0 16px 50px rgba(0,0,0,0.6);
         }
 
         .header-banner {
-            background: #2B5A9E;
+            background: transparent;
             padding: 0;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-banner-inner {
+            background: #2B5A9E;
         }
 
         .header-banner img {
@@ -32,11 +54,8 @@
         }
 
         .container {
-            max-width: 750px;
-            margin: 0 auto;
             background-color: white;
             padding: 40px 30px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
 
         h1 {
@@ -269,6 +288,19 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 20px 12px 40px 12px;
+            }
+
+            .form-wrapper {
+                outline-offset: 3px;
+                box-shadow:
+                    0 0 0 3px #000,
+                    0 0 0 6px #C9A84C,
+                    0 0 0 9px #000,
+                    0 8px 24px rgba(0,0,0,0.5);
+            }
+
             .form-row {
                 grid-template-columns: 1fr;
                 gap: 0;
@@ -293,10 +325,14 @@
     </style>
 </head>
 <body>
-    <div class="header-banner">
-        <img src="https://filedn.com/lVLsOock1BfXwnRWAjG1lob/LAAPOA/LAAPOA%20top%20art.png" alt="LAAPOA Logo">
+    <div class="form-wrapper">
+        <div class="header-banner">
+            <div class="header-banner-inner">
+                <img src="https://github.com/LAAPOA/Join_membership/blob/main/LAAPOA_top_art.png?raw=true" alt="LAAPOA Logo">
+            </div>
+        </div>
 
-    <div class="container">
+        <div class="container">
         <h1>Join the LAAPOA Membership</h1>
 
         <form id="membershipForm" action="/submit" method="POST">
@@ -405,6 +441,7 @@
 
         </form>
     </div>
+    </div><!-- end form-wrapper -->
 
     <script>
         // === CONFIGURATION ===
