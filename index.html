@@ -563,13 +563,10 @@
                 return { x: 0, y: 0 };
             }
             
-            // Calculate position relative to canvas
-            // Account for device pixel ratio
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            
-            const x = (clientX - rect.left) * (scaleX / window.devicePixelRatio || 1);
-            const y = (clientY - rect.top) * (scaleY / window.devicePixelRatio || 1);
+            // Calculate position relative to canvas (in CSS pixels)
+            // The canvas is already scaled by DPR in resizeCanvas, so we use CSS pixel coordinates
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
             
             return { x, y };
         }
