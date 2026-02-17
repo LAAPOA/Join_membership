@@ -234,6 +234,15 @@
             cursor: crosshair;
             touch-action: none;
             display: block;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* Ensure canvas is above other elements and fully interactive */
+        .signature-canvas:active {
+            border-color: #3D6BA8;
         }
 
         .signature-buttons {
@@ -430,7 +439,9 @@
                 
                 <!-- Landscape reminder - only shows on mobile in portrait mode -->
                 <div id="landscapeReminder" class="landscape-reminder">
-                    📱 Please rotate your device to landscape mode to sign
+                    <strong>📱 Rotate Your Device</strong><br>
+                    Please turn your phone to landscape (sideways) to sign.<br>
+                    <small style="opacity: 0.8; margin-top: 8px; display: block;">The signature pad works best in landscape mode on mobile devices.</small>
                 </div>
                 
                 <canvas id="signatureCanvas" class="signature-canvas"></canvas>
@@ -608,18 +619,50 @@
                 landscapeReminder.style.display = 'none';
                 canvas.style.display = 'block';
                 clearButton.parentElement.style.display = 'flex';
-                // Re-initialize canvas when switching to landscape
-                resizeCanvas();
+                
+                // IMPORTANT: Re-initialize canvas when switching to landscape
+                // This ensures the canvas is properly sized and ready for drawing
+                setTimeout(function() {
+                    // Save existing signature if present
+                    const existingSignature = hasSignature ? signatureDataField.value : null;
+                    
+                    // Reinitialize canvas
+                    resizeCanvas();
+                    
+                    // Restore signature if it existed
+                    if (existingSignature && hasSignature) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const dpr = window.devicePixelRatio || 1;
+                            ctx.drawImage(img, 0, 0, canvas.width / dpr, canvas.height / dpr);
+                        };
+                        img.src = existingSignature;
+                    }
+                    
+                    // Add visual feedback that canvas is ready
+                    canvas.style.borderColor = '#3D6BA8';
+                    setTimeout(function() {
+                        canvas.style.borderColor = '#d0dae8';
+                    }, 500);
+                    
+                    console.log('Canvas initialized in landscape mode - ready for signing');
+                }, 150);
             }
         }
         
-        // Check on load and orientation change
+        // Check on load
         checkOrientation();
+        
+        // Listen for orientation changes (iOS and Android)
         window.addEventListener('orientationchange', function() {
-            setTimeout(checkOrientation, 100);
+            setTimeout(checkOrientation, 250); // Longer delay for orientation change
         });
+        
+        // Also listen for resize as backup (some devices fire this instead)
+        let resizeTimer;
         window.addEventListener('resize', function() {
-            checkOrientation();
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(checkOrientation, 250);
         });
 
         // Email domain validation - exclude city email addresses
