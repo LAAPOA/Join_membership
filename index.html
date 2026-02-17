@@ -13,49 +13,40 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            background: linear-gradient(135deg, #2B5A9E 0%, #3D6BA8 50%, #2B4C7E 100%);
-            padding: 40px 20px;
+            background-color: #f5f5f5;
+            padding: 0;
             line-height: 1.5;
-            min-height: 100vh;
+        }
+
+        .header-banner {
+            background: #2B5A9E;
+            padding: 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-banner img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
 
         .container {
             max-width: 750px;
             margin: 0 auto;
             background-color: white;
-            padding: 0;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            border-radius: 8px;
-            overflow: hidden;
+            padding: 40px 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
 
-        .logo-container {
-            width: 100%;
-            background: #2B5A9E;
-            padding: 0;
-            margin: 0;
-        }
-
-        .form-logo {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .container > h1 {
-            padding: 35px 30px 15px 30px;
-            margin: 0;
+        h1 {
             text-align: center;
             color: #2B4C7E;
+            margin-bottom: 35px;
             font-size: 26px;
             font-weight: bold;
             border-bottom: 3px solid #3D6BA8;
             padding-bottom: 15px;
-            margin-bottom: 35px;
-        }
-
-        .container > form {
-            padding: 0 30px 40px 30px;
         }
 
         .form-row {
@@ -199,32 +190,6 @@
             margin-bottom: 12px;
         }
 
-        .landscape-reminder {
-            display: none;
-            background-color: #FFF3CD;
-            border: 2px solid #FFC107;
-            color: #856404;
-            padding: 15px;
-            border-radius: 6px;
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        /* Show reminder and hide canvas on mobile portrait mode */
-        @media screen and (max-width: 768px) and (orientation: portrait) {
-            .landscape-reminder {
-                display: block;
-            }
-            .signature-canvas {
-                display: none;
-            }
-            .signature-buttons {
-                display: none;
-            }
-        }
-
         .signature-canvas {
             width: 100%;
             height: 150px;
@@ -233,24 +198,6 @@
             background-color: #ffffff;
             cursor: crosshair;
             touch-action: none;
-            display: block;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            position: relative;
-        }
-        
-        /* Visual feedback when canvas is touched/active */
-        .signature-canvas:active {
-            border-color: #3D6BA8;
-            box-shadow: 0 0 0 3px rgba(61, 107, 168, 0.1);
-        }
-        
-        /* Ensure canvas is above other elements */
-        .signature-section {
-            position: relative;
-            z-index: 1;
         }
 
         .signature-buttons {
@@ -346,11 +293,10 @@
     </style>
 </head>
 <body>
+    <div class="header-banner">
+        <img src="https://filedn.com/lVLsOock1BfXwnRWAjG1lob/LAAPOA/LAAPOA%20top%20art.png" alt="LAAPOA Logo">
+
     <div class="container">
-        <div class="logo-container">
-            <img src="https://github.com/LAAPOA/Join_membership/blob/main/LAAPOA_top_art.png?raw=true" alt="LAAPOA Logo" class="form-logo">
-        </div>
-        
         <h1>Join the LAAPOA Membership</h1>
 
         <form id="membershipForm" action="/submit" method="POST">
@@ -376,15 +322,17 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>City Employee I.D. No <span class="required">*</span></label>
-                    <input type="tel" name="employeeId" id="employeeId" placeholder="Type your 5 or 6 digit City I.D. №" pattern="[0-9]{5,6}" maxlength="6" inputmode="numeric" required>
+                    <input type="text" name="employeeId" placeholder="Type you 5 -or 6 digit City I.D. №" required>
                 </div>
                 <div class="form-group">
                     <label>Department <span class="required">*</span></label>
                     <select name="department" required>
                         <option value="">specify your department</option>
-                        <option value="Airports - 0101">Airports - 0101</option>
-                        <option value="LAPD - 4302">LAPD - 4302</option>
-                        <option value="Rec & Parks - 7901">Rec & Parks - 7901</option>
+                        <option value="Airport Police">Airport Police</option>
+                        <option value="Airport Operations">Airport Operations</option>
+                        <option value="Airport Security">Airport Security</option>
+                        <option value="Administration">Administration</option>
+                        <option value="Other">Other</option>
                     </select>
                 </div>
             </div>
@@ -444,19 +392,6 @@
 
             <div class="signature-section">
                 <label>Signature <span class="required conditional-required">*</span></label>
-                
-                <!-- Landscape reminder - only shows on mobile in portrait mode -->
-                <div id="landscapeReminder" class="landscape-reminder">
-                    <strong>📱 Rotate Your Device</strong><br>
-                    Please turn your phone to landscape (sideways) to sign.<br>
-                    <small style="opacity: 0.8; margin-top: 8px; display: block;">The signature pad works best in landscape mode on mobile devices.</small>
-                </div>
-                
-                <p style="font-size: 13px; color: #666; margin-bottom: 10px;">
-                    <strong>How to sign:</strong> Use your finger or stylus to draw your signature in the box below.
-                    The border will turn blue when you touch it.
-                </p>
-                
                 <canvas id="signatureCanvas" class="signature-canvas"></canvas>
                 <div class="signature-buttons">
                     <button type="button" id="clearSignature" class="clear-button">Clear Signature</button>
@@ -473,8 +408,8 @@
 
     <script>
         // === CONFIGURATION ===
-        // Google Apps Script Web App URL for form submission
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtB8GmkFkrTAHcKvcWJZxPf3_0JAEf5ZSkx9FLOfGf4_c6eOgQKnjeyVnNnJtC-fO_/exec';
+        // Replace this with your Google Apps Script Web App URL after deployment
+        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 
         // Get all form field references
         const dobField = document.getElementById('dob');
@@ -486,230 +421,78 @@
         const emailField = document.getElementById('email');
         const phoneField = document.getElementById('phone');
         const streetAddressField = document.getElementById('streetAddress');
-        const employeeIdField = document.getElementById('employeeId');
         const signatureDataField = document.getElementById('signatureData');
         const conditionalAsterisks = document.querySelectorAll('.conditional-required');
 
-        // Signature Canvas Setup - SIMPLIFIED FOR MAXIMUM MOBILE COMPATIBILITY
+        // Signature Canvas Setup
         const canvas = document.getElementById('signatureCanvas');
-        const ctx = canvas.getContext('2d', { willReadFrequently: false });
+        const ctx = canvas.getContext('2d');
         const clearButton = document.getElementById('clearSignature');
         let isDrawing = false;
         let hasSignature = false;
-        let lastX = 0;
-        let lastY = 0;
 
-        // Simplified canvas sizing - works reliably on all devices
+        // Set canvas size
         function resizeCanvas() {
-            // Get the actual display size
             const rect = canvas.getBoundingClientRect();
-            
-            // Set canvas pixel dimensions to match display size
-            // Use simple 1:1 ratio - no DPR complications
             canvas.width = rect.width;
             canvas.height = rect.height;
-            
-            // Set drawing style
             ctx.strokeStyle = '#000';
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            
-            console.log('Canvas resized:', canvas.width, 'x', canvas.height);
         }
-        
-        // Initialize canvas
         resizeCanvas();
-        
-        // Handle window resize
-        let resizeTimeout;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(function() {
-                const savedSignature = hasSignature ? signatureDataField.value : null;
-                resizeCanvas();
-                if (savedSignature) {
-                    const img = new Image();
-                    img.onload = function() {
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    };
-                    img.src = savedSignature;
-                }
-            }, 100);
-        });
+        window.addEventListener('resize', resizeCanvas);
 
-        // Simplified drawing functions
-        function getCanvasPosition(e) {
-            const rect = canvas.getBoundingClientRect();
-            const touch = e.touches ? e.touches[0] : e;
-            
-            return {
-                x: touch.clientX - rect.left,
-                y: touch.clientY - rect.top
-            };
-        }
-
+        // Drawing functions
         function startDrawing(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
             isDrawing = true;
-            const pos = getCanvasPosition(e);
-            lastX = pos.x;
-            lastY = pos.y;
-            
-            // Start a new path
+            const pos = getPosition(e);
             ctx.beginPath();
             ctx.moveTo(pos.x, pos.y);
-            
-            console.log('Started drawing at:', pos.x, pos.y);
         }
 
         function draw(e) {
             if (!isDrawing) return;
-            
             e.preventDefault();
-            e.stopPropagation();
-            
-            const pos = getCanvasPosition(e);
-            
-            // Draw line from last position to current position
+            hasSignature = true;
+            const pos = getPosition(e);
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
-            
-            lastX = pos.x;
-            lastY = pos.y;
-            hasSignature = true;
         }
 
-        function stopDrawing(e) {
-            if (!isDrawing) return;
-            
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            
+        function stopDrawing() {
             isDrawing = false;
-            
+            ctx.closePath();
             if (hasSignature) {
-                // Save signature
+                // Save signature as base64
                 signatureDataField.value = canvas.toDataURL('image/png');
-                console.log('Signature saved');
             }
         }
 
-        // Remove all old event listeners and add new ones
-        // Mouse events
-        canvas.addEventListener('mousedown', startDrawing, false);
-        canvas.addEventListener('mousemove', draw, false);
-        canvas.addEventListener('mouseup', stopDrawing, false);
-        canvas.addEventListener('mouseleave', stopDrawing, false);
+        function getPosition(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            return { x, y };
+        }
 
-        // Touch events - CRITICAL for mobile
-        canvas.addEventListener('touchstart', startDrawing, { passive: false });
-        canvas.addEventListener('touchmove', draw, { passive: false });
-        canvas.addEventListener('touchend', stopDrawing, { passive: false });
-        canvas.addEventListener('touchcancel', stopDrawing, { passive: false });
+        // Mouse events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
 
         // Clear signature
-        clearButton.addEventListener('click', function(e) {
-            e.preventDefault();
+        clearButton.addEventListener('click', function() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             hasSignature = false;
             signatureDataField.value = '';
-            console.log('Signature cleared');
-        });
-
-        // Simplified orientation handling for mobile
-        function checkOrientation() {
-            const isMobile = window.innerWidth <= 768;
-            const isPortrait = window.innerHeight > window.innerWidth;
-            const landscapeReminder = document.getElementById('landscapeReminder');
-            
-            if (isMobile && isPortrait) {
-                // Portrait mode - hide canvas, show reminder
-                landscapeReminder.style.display = 'block';
-                canvas.style.display = 'none';
-                clearButton.parentElement.style.display = 'none';
-                console.log('Portrait mode - canvas hidden');
-            } else {
-                // Landscape or desktop - show canvas
-                landscapeReminder.style.display = 'none';
-                canvas.style.display = 'block';
-                clearButton.parentElement.style.display = 'flex';
-                
-                // Reinitialize canvas after a delay
-                setTimeout(function() {
-                    const savedSignature = hasSignature ? signatureDataField.value : null;
-                    resizeCanvas();
-                    
-                    // Restore signature if present
-                    if (savedSignature) {
-                        const img = new Image();
-                        img.onload = function() {
-                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                            console.log('Signature restored');
-                        };
-                        img.src = savedSignature;
-                    }
-                    
-                    console.log('Landscape mode - canvas ready');
-                }, 200);
-            }
-        }
-        
-        // Check orientation on load and when it changes
-        checkOrientation();
-        
-        window.addEventListener('orientationchange', function() {
-            setTimeout(checkOrientation, 300);
-        });
-        
-        window.addEventListener('resize', function() {
-            setTimeout(checkOrientation, 100);
-        });
-
-        // Email domain validation - exclude city email addresses
-        const blockedDomains = ['@lawa.org', '@lapd.online', '@lacity.org'];
-        
-        emailField.addEventListener('blur', function() {
-            const email = this.value.toLowerCase();
-            if (email) {
-                const isBlocked = blockedDomains.some(domain => email.endsWith(domain));
-                if (isBlocked) {
-                    this.setCustomValidity('Please use a non-city email address (not @lawa.org, @lapd.online, or @lacity.org)');
-                    this.reportValidity();
-                } else {
-                    this.setCustomValidity('');
-                }
-            }
-        });
-
-        emailField.addEventListener('input', function() {
-            // Clear error as user types
-            this.setCustomValidity('');
-        });
-
-        // Employee ID validation - only allow 5-6 digit numbers
-        employeeIdField.addEventListener('input', function(e) {
-            // Remove any non-numeric characters
-            this.value = this.value.replace(/[^0-9]/g, '');
-            
-            // Limit to 6 digits
-            if (this.value.length > 6) {
-                this.value = this.value.slice(0, 6);
-            }
-        });
-
-        employeeIdField.addEventListener('blur', function() {
-            const value = this.value;
-            if (value && (value.length < 5 || value.length > 6)) {
-                this.setCustomValidity('Employee ID must be 5 or 6 digits');
-                this.reportValidity();
-            } else {
-                this.setCustomValidity('');
-            }
         });
 
         // Set default date for DOB picker to January 1, 1995
@@ -803,37 +586,9 @@
         document.getElementById('membershipForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Check if on mobile in portrait mode
-            const isMobile = window.innerWidth <= 768;
-            const isPortrait = window.innerHeight > window.innerWidth;
-            
-            if (isMobile && isPortrait) {
-                alert('Please rotate your device to landscape mode to complete and sign the form.');
-                return;
-            }
-            
             // Check if signature is required and present
             if (yesRadio.checked && !hasSignature) {
                 alert('Please provide your signature before submitting.');
-                return;
-            }
-            
-            // Check for blocked email domains if email is provided
-            if (emailField.value) {
-                const email = emailField.value.toLowerCase();
-                const isBlocked = ['@lawa.org', '@lapd.online', '@lacity.org'].some(domain => email.endsWith(domain));
-                if (isBlocked) {
-                    alert('Please use a non-city email address. City email addresses (@lawa.org, @lapd.online, @lacity.org) are not accepted.');
-                    emailField.focus();
-                    return;
-                }
-            }
-            
-            // Validate employee ID
-            const empId = employeeIdField.value;
-            if (empId.length < 5 || empId.length > 6 || !/^[0-9]+$/.test(empId)) {
-                alert('Employee ID must be 5 or 6 digits.');
-                employeeIdField.focus();
                 return;
             }
             
@@ -849,7 +604,7 @@
             // Show loading state
             const submitButton = this.querySelector('.submit-button');
             const originalText = submitButton.textContent;
-            submitButton.textContent = 'Submitting greatness takes patience 😉';
+            submitButton.textContent = 'Submitting...';
             submitButton.disabled = true;
             
             try {
