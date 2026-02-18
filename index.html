@@ -444,7 +444,7 @@
     <script>
         // === CONFIGURATION ===
         // Replace this with your Google Apps Script Web App URL after deployment
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtB8GmkFkrTAHcKvcWJZxPf3_0JAEf5ZSkx9FLOfGf4_c6eOgQKnjeyVnNnJtC-fO_/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBRjZLV6hu5kHSKDedHaZ10KTj-NSuC9Lz_T7rB_hK8y6-K0SdNntQigZzTWRi2XmE/exec';
 
         // Get all form field references
         const dobField = document.getElementById('dob');
@@ -639,8 +639,17 @@
             // Show loading state
             const submitButton = this.querySelector('.submit-button');
             const originalText = submitButton.textContent;
-            submitButton.textContent = 'Submitting...';
+            
+            // Animated loading text with dots
+            let dotCount = 0;
+            submitButton.textContent = 'Joining greatness takes patience 😉';
             submitButton.disabled = true;
+            
+            const dotInterval = setInterval(() => {
+                dotCount = (dotCount + 1) % 5;
+                const dots = '.'.repeat(dotCount);
+                submitButton.textContent = 'Joining greatness takes patience' + dots + ' 😉';
+            }, 500);
             
             try {
                 // Send to Google Sheets
@@ -667,6 +676,7 @@
                 console.error('Submission error:', error);
                 alert('There was an error submitting your form. Please try again or contact support.');
             } finally {
+                clearInterval(dotInterval);
                 submitButton.textContent = originalText;
                 submitButton.disabled = false;
             }
