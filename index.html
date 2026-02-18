@@ -358,7 +358,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>City Employee I.D. No <span class="required">*</span></label>
-                    <input type="text" name="employeeId" placeholder="Type you 5 -or 6 digit City I.D. №" required>
+                    <input type="text" id="employeeId" name="employeeId" placeholder="Type you 5 -or 6 digit City I.D. №" pattern="[0-9]{5,6}" title="Employee ID must be 5 or 6 digits" required>
                 </div>
                 <div class="form-group">
                     <label>Department <span class="required">*</span></label>
@@ -453,6 +453,28 @@
         const stateField = document.getElementById('state');
         const yesRadio = document.getElementById('join-yes');
         const noRadio = document.getElementById('join-no');
+        const employeeIdField = document.getElementById('employeeId');
+
+        // Employee ID validation - only allow 5-6 digit numbers
+        employeeIdField.addEventListener('input', function(e) {
+            // Remove any non-numeric characters
+            this.value = this.value.replace(/[^0-9]/g, '');
+            
+            // Limit to 6 digits
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
+            }
+        });
+
+        employeeIdField.addEventListener('blur', function() {
+            const value = this.value;
+            if (value && (value.length < 5 || value.length > 6)) {
+                this.setCustomValidity('Employee ID must be 5 or 6 digits');
+                this.reportValidity();
+            } else {
+                this.setCustomValidity('');
+            }
+        });
         const emailField = document.getElementById('email');
         const phoneField = document.getElementById('phone');
         const streetAddressField = document.getElementById('streetAddress');
