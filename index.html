@@ -768,7 +768,7 @@
             // YES: check enrollment window against prior NO / opt-out
             if (choice === 'yes') {
                 try {
-                    const r = await fetch(GOOGLE_SCRIPT_URL + '?action=lookup&employeeId=' + encodeURIComponent(employeeIdField.value));
+                    const r = await fetch(GOOGLE_SCRIPT_URL + '?action=lookup&employeeId=' + encodeURIComponent(employeeIdField.value) + '&lastName=' + encodeURIComponent(document.querySelector('[name="lastName"]').value));
                     const prior = await r.json(); // { status: 'none'|'yes'|'no'|'optout', date: ISO }
                     if (prior && (prior.status === 'no' || prior.status === 'optout') && prior.date) {
                         const priorDate = new Date(prior.date);
