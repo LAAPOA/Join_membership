@@ -197,6 +197,28 @@
             color: #333;
         }
 
+        .yes-row { margin-bottom: 16px; }
+        .addr-row { display: flex; gap: 25px; margin-bottom: 20px; align-items: flex-end; }
+        .addr-row .form-group { margin-bottom: 0; }
+        .citystate-group { flex: 0 0 0; max-width: 0; opacity: 0; overflow: hidden; transition: flex-basis .35s ease, max-width .35s ease, opacity .25s ease .1s; }
+        .addr-row.revealed .citystate-group { flex: 1 1 auto; max-width: 100%; opacity: 1; }
+        .zip-group { flex: 0 0 calc(5ch + 46px); margin-left: 0; transition: margin-left .35s ease, flex-basis .35s ease; }
+        .addr-row.revealed .zip-group { flex-basis: calc(10ch + 46px); }
+        .addr-row:not(.revealed) { gap: 0; }
+        .addr-row.revealed .zip-group { margin-left: auto; }
+        .zip-hint { align-self: flex-end; margin: 0 0 12px 14px; font-size: 13px; color: #666; font-style: italic; transition: opacity .2s; }
+        .addr-row.revealed .zip-hint { display: none; }
+        #cityState.autofilled { background-color: #f0f8ff; }
+        @media (max-width: 600px) { .addr-row { gap: 12px; } .addr-row:not(.revealed) { gap: 0; } }
+        .no-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 600px) { .no-row { grid-template-columns: 1fr; } }
+        .waiver-box { display: none; margin-top: 16px; padding: 16px; border: 2px solid #c0392b; background: #fdf2f1; border-radius: 6px; font-size: 13px; line-height: 1.7; color: #5a1a14; }
+        .waiver-box.show { display: block; }
+        .waiver-box strong { display: block; color: #c0392b; margin-bottom: 6px; }
+        .email-hint { font-size: 12px; color: #666; margin-top: 4px; }
+        .email-error { display: none; font-size: 12px; color: #c0392b; font-weight: bold; margin-top: 4px; }
+        .email-error.show { display: block; }
+
         .signature-section {
             margin-top: 30px;
             padding: 20px;
@@ -351,7 +373,8 @@
             <div class="form-row">
                 <div class="form-group full-width" style="max-width: 50%; margin: 0 auto;">
                     <label>Date of Birth <span class="required">*</span></label>
-                    <input type="date" id="dob" name="dob" required>
+                    <input type="text" id="dobDisplay" style="text-align: center;" inputmode="numeric" placeholder="MM/DD/YYYY" maxlength="10" autocomplete="bday" required>
+                    <input type="hidden" id="dob" name="dob">
                 </div>
             </div>
 
@@ -377,51 +400,62 @@
                     <input type="tel" id="phone" name="phone" placeholder="">
                 </div>
                 <div class="form-group">
-                    <label>Personal Email <span class="required conditional-required">*</span></label>
+                    <label id="emailLabel">Personal Email <span class="required conditional-required">*</span></label>
                     <input type="email" id="email" name="email" placeholder="Input your personal (NON-City) email address">
+                    <div class="email-hint" id="emailHint"></div>
+                    <div class="email-error" id="emailError">City email addresses aren't accepted for membership. Please use a personal email address (Gmail, Yahoo, iCloud, etc.).</div>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group full-width">
                     <label>Street Address <span class="required conditional-required">*</span></label>
-                    <input type="text" id="streetAddress" name="streetAddress" placeholder="Enter house number and street name">
+                    <input type="text" id="streetAddress" name="streetAddress" placeholder="Enter house number and street name" autocomplete="street-address">
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
+            <div class="addr-row" id="addrRow">
+                <div class="form-group citystate-group">
+                    <label>City, State <span class="required conditional-required">*</span></label>
+                    <input type="text" id="cityState" placeholder="City, ST" autocomplete="off" tabindex="-1">
+                    <input type="hidden" id="city" name="city">
+                    <input type="hidden" id="state" name="state">
+                </div>
+                <div class="form-group zip-group">
                     <label>ZIP Code <span class="required conditional-required">*</span></label>
-                    <input type="text" id="zipCode" name="zipCode" placeholder="Enter ZIP code" maxlength="5" pattern="[0-9]{5}">
+                    <input type="text" id="zipCode" name="zipCode" placeholder="90210" maxlength="10" inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}(-[0-9]{4})?" title="5-digit ZIP, optionally followed by -4 digits">
                 </div>
-                <div class="form-group">
-                    <label>City <span class="required conditional-required">*</span></label>
-                    <input type="text" id="city" name="city" placeholder="Will auto-populate">
-                </div>
-                <div class="form-group">
-                    <label>State <span class="required conditional-required">*</span></label>
-                    <input type="text" id="state" name="state" placeholder="Will auto-populate">
-                </div>
+                <div class="zip-hint" id="zipHint">Enter ZIP Code only. City &amp; State with +4 will auto-populate.</div>
             </div>
 
             <div class="radio-section">
                 <label>Do you wish to join LAAPOA's membership? <span class="required">*</span></label>
                 
-                <div class="radio-options-container">
+                <div class="yes-row">
                     <div class="radio-option">
                         <input type="radio" id="join-yes" name="membership" value="yes" required>
                         <label for="join-yes" class="radio-text">
-                            YES, I wish to join and receive the benefits of LAAPOA membership. I understand the membership dues are on a payperiod, and will be directly deducted from my pay check. dues amount per pay period - $81.00
-                        </label>
-                    </div>
-
-                    <div class="radio-option">
-                        <input type="radio" id="join-no" name="membership" value="no">
-                        <label for="join-no" class="radio-text">
-                            NO, I do not wish to join, or I am currently a member and I want to terminate, as in opt-out of my current membership with LAAPOA. I do not wish to be protected by any LAAPOA's benefits offerings or programs. I understand the risks involved including NO association provided representation at any phase of the I.A. or POST Licensing Review Process; and I accept these risks in exchange for paying ZERO dues contributions. - $0.00
+                            YES, I wish to join and receive the benefits of LAAPOA membership. I understand the membership dues are on a pay period basis and will be directly deducted from my paycheck. Dues amount per pay period - $81.00
                         </label>
                     </div>
                 </div>
+
+                <div class="no-row">
+                    <div class="radio-option">
+                        <input type="radio" id="join-no" name="membership" value="no">
+                        <label for="join-no" class="radio-text">NO, not at this time.</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="join-optout" name="membership" value="optout">
+                        <label for="join-optout" class="radio-text">NO, I am currently a member, but I am choosing to opt out of membership.</label>
+                    </div>
+                </div>
+
+                <div class="waiver-box" id="waiverBox">
+                    <strong>Waiver - applies to either NO selection</strong>
+                    I understand that by not joining, or by opting out of my current membership, I will not receive any of LAAPOA's benefits, programs, or services. This includes NO association-provided representation at any phase of an Internal Affairs (I.A.) investigation or the POST Licensing Review Process. I accept these risks in exchange for paying ZERO dues contributions. - $0.00
+                </div>
+            
             </div>
 
             <div class="signature-section">
@@ -453,6 +487,19 @@
         const stateField = document.getElementById('state');
         const yesRadio = document.getElementById('join-yes');
         const noRadio = document.getElementById('join-no');
+        const optOutRadio = document.getElementById('join-optout');
+        const waiverBox = document.getElementById('waiverBox');
+
+        // City email domains not allowed for YES (also blocks subdomains)
+        const BLOCKED_EMAIL_DOMAINS = ['lawa.org', 'lapd.online', 'lacity.org'];
+        function isCityEmail(email) {
+            const domain = (email.split('@')[1] || '').trim().toLowerCase();
+            return BLOCKED_EMAIL_DOMAINS.some(d => domain === d || domain.endsWith('.' + d));
+        }
+        function fmtDate(d) {
+            return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        }
+        function addDays(d, n) { const x = new Date(d); x.setDate(x.getDate() + n); return x; }
         const employeeIdField = document.getElementById('employeeId');
 
         // Employee ID validation - only allow 5-6 digit numbers
@@ -552,61 +599,101 @@
             signatureDataField.value = '';
         });
 
-        // Set default date for DOB picker to January 1, 1995
-        dobField.value = '1995-01-01';
-        dobField.max = new Date().toISOString().split('T')[0]; // Can't select future dates
+        // DOB: number pad, auto-formats MM/DD/YYYY; sheet still receives YYYY-MM-DD in "dob"
+        const dobDisplay = document.getElementById('dobDisplay');
+        function syncDob() {
+            const m = dobDisplay.value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+            let msg = '';
+            dobField.value = '';
+            if (dobDisplay.value && !m) {
+                msg = 'Enter date of birth as MM/DD/YYYY.';
+            } else if (m) {
+                const [mm, dd, yyyy] = [+m[1], +m[2], +m[3]];
+                const d = new Date(yyyy, mm - 1, dd);
+                if (d.getFullYear() !== yyyy || d.getMonth() !== mm - 1 || d.getDate() !== dd) msg = 'That date doesn\'t exist. Check the month and day.';
+                else if (d > new Date() || yyyy < 1900) msg = 'Please enter a valid date of birth.';
+                else dobField.value = `${m[3]}-${m[1]}-${m[2]}`;
+            }
+            dobDisplay.setCustomValidity(msg);
+        }
+        dobDisplay.addEventListener('input', function (e) {
+            const digits = this.value.replace(/\D/g, '').slice(0, 8);
+            const deleting = e.inputType && e.inputType.startsWith('delete');
+            let v = digits;
+            if (digits.length > 4) v = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
+            else if (digits.length > 2) v = digits.slice(0, 2) + '/' + digits.slice(2);
+            if (!deleting && (digits.length === 2 || digits.length === 4)) v += '/';
+            this.value = v;
+            syncDob();
+        });
+        dobDisplay.addEventListener('blur', function () { this.value = this.value.replace(/\/$/, ''); syncDob(); });
 
-        // ZIP code to city lookup using free API (works for all US ZIP codes)
-        // Falls back to manual entry if API is unavailable
-        zipCodeField.addEventListener('input', async function(e) {
-            const zip = e.target.value;
-            
-            // Only lookup when we have 5 digits
-            if (zip.length === 5 && /^\d{5}$/.test(zip)) {
-                try {
-                    // Using Zippopotam.us - free ZIP code API, no key needed
-                    const response = await fetch(`https://api.zippopotam.us/us/${zip}`, {
-                        method: 'GET',
-                        mode: 'cors'
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        const place = data.places[0];
-                        
-                        // Auto-populate but allow editing
-                        cityField.value = place['place name'];
-                        stateField.value = place['state'];
-                        cityField.style.backgroundColor = '#f0f8ff'; // Light blue to indicate auto-filled
-                        stateField.style.backgroundColor = '#f0f8ff';
-                    } else {
-                        // ZIP not found - allow manual entry
-                        cityField.placeholder = 'Enter city manually';
-                        stateField.placeholder = 'Enter state manually';
-                    }
-                } catch (error) {
-                    // Network error or API unavailable - silently allow manual entry
-                    console.log('ZIP lookup unavailable - manual entry enabled');
-                    cityField.placeholder = 'Enter city manually';
-                    stateField.placeholder = 'Enter state manually';
-                    // Don't show error to user - just let them enter manually
-                }
-            } else if (zip.length < 5) {
-                // Reset background color when ZIP is incomplete
-                cityField.style.backgroundColor = '';
-                stateField.style.backgroundColor = '';
-                cityField.placeholder = 'Will auto-populate (or enter manually)';
-                stateField.placeholder = 'Will auto-populate (or enter manually)';
+        // ---- ZIP + shared City, State field ----
+        const addrRow = document.getElementById('addrRow');
+        const cityStateField = document.getElementById('cityState');
+        let lastLookupZip = '';
+
+        // Keep hidden city/state (what the sheet receives) in sync with the shared field
+        function splitCityState() {
+            const v = cityStateField.value.trim();
+            const i = v.lastIndexOf(',');
+            if (i === -1) { cityField.value = v; stateField.value = ''; return; }
+            cityField.value = v.slice(0, i).trim();
+            stateField.value = v.slice(i + 1).trim().toUpperCase();
+        }
+
+        function revealCityState(show) {
+            addrRow.classList.toggle('revealed', show);
+            cityStateField.tabIndex = show ? 0 : -1;
+        }
+
+        async function lookupZip(zip5) {
+            if (zip5 === lastLookupZip) return;
+            lastLookupZip = zip5;
+            try {
+                const response = await fetch(`https://api.zippopotam.us/us/${zip5}`);
+                if (!response.ok) throw new Error('not found');
+                const place = (await response.json()).places[0];
+                cityStateField.value = `${place['place name']}, ${place['state abbreviation']}`;
+                cityStateField.classList.add('autofilled');
+            } catch (err) {
+                cityStateField.value = '';
+                cityStateField.placeholder = 'Enter City, ST';
+                cityStateField.classList.remove('autofilled');
+            }
+            splitCityState();
+        }
+
+        // Format as 12345 or 12345-6789; reveal City, State at the 5th digit
+        zipCodeField.addEventListener('input', function (e) {
+            const digits = this.value.replace(/\D/g, '').slice(0, 9);
+            const deleting = e.inputType && e.inputType.startsWith('delete');
+            let formatted = digits;
+            if (digits.length > 5) formatted = digits.slice(0, 5) + '-' + digits.slice(5);
+            else if (digits.length === 5 && !deleting) formatted = digits + '-';
+            this.value = formatted;
+
+            if (digits.length >= 5) {
+                revealCityState(true);
+                lookupZip(digits.slice(0, 5));
+            } else {
+                revealCityState(false);
+                lastLookupZip = '';
+                cityStateField.value = '';
+                cityStateField.classList.remove('autofilled');
+                splitCityState();
             }
         });
 
-        // Remove background color when user manually edits
-        cityField.addEventListener('input', function() {
-            this.style.backgroundColor = '';
+        // Drop a dangling dash if they skip the +4
+        zipCodeField.addEventListener('blur', function () {
+            this.value = this.value.replace(/-$/, '');
         });
-        
-        stateField.addEventListener('input', function() {
-            this.style.backgroundColor = '';
+
+        // City is editable; edits clear the auto-filled tint
+        cityStateField.addEventListener('input', function () {
+            this.classList.remove('autofilled');
+            splitCityState();
         });
 
         // Handle conditional required fields based on membership selection
@@ -617,25 +704,46 @@
                 phoneField.required = true;
                 streetAddressField.required = true;
                 zipCodeField.required = true;
-                cityField.required = true;
-                stateField.required = true;
+                cityStateField.required = true;
                 // Signature is checked during form submission
                 conditionalAsterisks.forEach(asterisk => {
                     asterisk.style.display = 'inline';
                 });
+                waiverBox.classList.remove('show');
+                document.getElementById('emailLabel').firstChild.textContent = 'Personal Email ';
+                document.getElementById('emailHint').textContent = '';
             } else {
                 // If NO selected, these fields are not required
                 emailField.required = false;
                 phoneField.required = false;
                 streetAddressField.required = false;
                 zipCodeField.required = false;
-                cityField.required = false;
-                stateField.required = false;
+                cityStateField.required = false;
                 conditionalAsterisks.forEach(asterisk => {
                     asterisk.style.display = 'none';
                 });
+                waiverBox.classList.toggle('show', noRadio.checked || optOutRadio.checked);
+                document.getElementById('emailLabel').firstChild.textContent = 'Email (optional) ';
+                document.getElementById('emailHint').textContent = 'Want a receipt? Enter your email. City email is okay.';
             }
+            checkEmail();
         }
+
+        function checkEmail() {
+            const bad = yesRadio.checked && emailField.value && isCityEmail(emailField.value);
+            document.getElementById('emailError').classList.toggle('show', !!bad);
+            emailField.setCustomValidity(bad ? 'Please use a personal (non-City) email address.' : '');
+            return !bad;
+        }
+        emailField.addEventListener('input', checkEmail);
+        optOutRadio.addEventListener('change', updateRequiredFields);
+
+        // Arriving from optout.laapoa.org (?choice=optout) or a no link: preselect that choice
+        (function () {
+            const pre = new URLSearchParams(location.search).get('choice');
+            const target = { optout: optOutRadio, no: noRadio, yes: yesRadio }[pre];
+            if (target) { target.checked = true; updateRequiredFields(); }
+        })();
 
         yesRadio.addEventListener('change', updateRequiredFields);
         noRadio.addEventListener('change', updateRequiredFields);
@@ -648,8 +756,42 @@
                 alert('Please provide your signature before submitting.');
                 return;
             }
+
+            // YES: personal email only
+            if (!checkEmail()) {
+                emailField.reportValidity();
+                return;
+            }
+
+            const choice = yesRadio.checked ? 'yes' : (optOutRadio.checked ? 'optout' : 'no');
+
+            // YES: check enrollment window against prior NO / opt-out
+            if (choice === 'yes') {
+                try {
+                    const r = await fetch(GOOGLE_SCRIPT_URL + '?action=lookup&employeeId=' + encodeURIComponent(employeeIdField.value));
+                    const prior = await r.json(); // { status: 'none'|'yes'|'no'|'optout', date: ISO }
+                    if (prior && (prior.status === 'no' || prior.status === 'optout') && prior.date) {
+                        const priorDate = new Date(prior.date);
+                        const windowEnd = addDays(priorDate, 30);
+                        const now = new Date();
+                        if (now > windowEnd && now.getMonth() !== 0) {
+                            const year = now.getFullYear() + 1;
+                            const msg = prior.status === 'optout'
+                                ? `Our records show you opted out of membership on ${fmtDate(priorDate)}. Your 30-day window to rejoin closed on ${fmtDate(windowEnd)}.\n\nYou can rejoin during open enrollment, January 1–31, ${year}. We look forward to welcoming you back.`
+                                : `Our records show you declined membership on ${fmtDate(priorDate)}. Your 30-day window to join closed on ${fmtDate(windowEnd)}.\n\nYou can join during open enrollment, January 1–31, ${year}. We look forward to welcoming you then.`;
+                            alert(msg);
+                            return;
+                        }
+                    }
+                } catch (err) {
+                    console.log('Enrollment lookup unavailable - allowing submission', err);
+                }
+            }
             
             // Collect form data
+            zipCodeField.value = zipCodeField.value.replace(/-$/, '');
+            splitCityState();
+            syncDob();
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
             
@@ -664,13 +806,15 @@
             
             // Animated loading text with dots
             let dotCount = 0;
-            submitButton.textContent = 'Joining greatness takes patience 😉';
+            const loadingText = { yes: 'Joining greatness takes patience', no: 'Submitting your response', optout: 'Processing your opt-out request' }[choice];
+            const loadingEmoji = choice === 'yes' ? ' 😉' : '';
+            submitButton.textContent = loadingText + loadingEmoji;
             submitButton.disabled = true;
             
             const dotInterval = setInterval(() => {
                 dotCount = (dotCount + 1) % 5;
                 const dots = '.'.repeat(dotCount);
-                submitButton.textContent = 'Joining greatness takes patience' + dots + ' 😉';
+                submitButton.textContent = loadingText + dots + loadingEmoji;
             }, 500);
             
             try {
@@ -686,13 +830,23 @@
                 
                 // Note: no-cors mode means we can't read the response
                 // We assume success if no error is thrown
-                alert('Thank you! Your LAAPOA membership form has been submitted successfully.');
+                const deadline = fmtDate(addDays(new Date(), 30));
+                const doneMsg = {
+                    yes: 'Welcome to LAAPOA!\n\nYour membership form has been received. Dues of $81.00 per pay period will begin through payroll deduction. A confirmation has been sent to your email.',
+                    no: `Thank you for your response.\n\nWe're sorry you've decided not to join LAAPOA at this time. If you change your mind by ${deadline}, just use the same link to come back and start your membership and the benefits that come with it. After that date, you can join only during open enrollment, held each January.\n\nIn the meantime, the entire LAAPOA Board wishes you the best. Stay safe.`,
+                    optout: `Your opt-out request has been received.\n\nWe're sorry to see you go, and we thank you for the time you've been a member of LAAPOA. Your membership and payroll dues deduction will end once processing is complete. Until then, dues may still appear on your paycheck.\n\nIf you change your mind by ${deadline}, just use the same link to come back and restore your membership and the benefits that come with it. After ${deadline}, you may only rejoin during open enrollment, held each January.\n\nIn the meantime, the entire LAAPOA Board wishes you the best. Stay safe.`
+                }[choice];
+                alert(doneMsg);
                 
                 // Reset form
                 this.reset();
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 hasSignature = false;
                 signatureDataField.value = '';
+                updateRequiredFields();
+                revealCityState(false);
+                lastLookupZip = '';
+                cityStateField.classList.remove('autofilled');
                 
             } catch (error) {
                 console.error('Submission error:', error);
